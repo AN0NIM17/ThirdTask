@@ -19,10 +19,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
-    
+
     public User create(User user) {
         HttpEntity<User> entity = new HttpEntity<User>(user);
-        ResponseEntity<User> responseEntity = restTemplate.exchange("http://thirdservice:8083/user", HttpMethod.POST, entity, User.class);
+        ResponseEntity<User> responseEntity = restTemplate.exchange("http://thirdservice:8083/user", HttpMethod.POST,
+                entity, User.class);
         User createdUser = responseEntity.getBody();
         createdUser.setMiddleName(user.getMiddleName());
         log.info("Get user: {}", createdUser);
@@ -32,11 +33,4 @@ public class UserService {
             return null;
         }
     }
-//    
-//    public User update(Long id, User user) {
-//        user.setId(id);
-//        user = userRepository.save(user);
-//        HttpEntity<User> entity = new HttpEntity<User>(user);
-//        return restTemplate.exchange("http://thirdservice:8083", HttpMethod.PUT, entity, User.class).getBody();
-//    }
 }

@@ -21,6 +21,7 @@ services:
   mysql:
     image: mysql:latest
     environment:
+      - MYSQL_DATABASE=forServices
       - MYSQL_ROOT_PASSWORD=123
     volumes:
       - ./mysqlData:/var/lib/mysql

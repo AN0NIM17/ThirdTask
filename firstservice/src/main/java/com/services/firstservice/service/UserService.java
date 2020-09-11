@@ -26,7 +26,8 @@ public class UserService {
 
     public User create(User user) {
         HttpEntity<User> entity = new HttpEntity<User>(user);
-        ResponseEntity<User> responseEntity = restTemplate.exchange("http://secondservice:8082/user", HttpMethod.POST, entity,
+        ResponseEntity<User> responseEntity = restTemplate.exchange("http://secondservice:8082/user", HttpMethod.POST,
+                entity,
                 User.class);
         User createdUser = responseEntity.getBody();
         createdUser.setLastName(user.getLastName());
@@ -39,15 +40,8 @@ public class UserService {
     }
 
     public User update(Long id, User user) {
-        HttpEntity<User> entity = new HttpEntity<User>(user);
-        ResponseEntity<User> responseEntity = restTemplate.exchange("http://secondservice:8082/user", HttpMethod.PUT, entity,
-                User.class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            user.setId(id);
-            return userRepository.save(user);
-        } else {
-            return null;
-        }
+        user.setId(id);
+        return userRepository.save(user);
     }
 
     public void delete(Long id) {
