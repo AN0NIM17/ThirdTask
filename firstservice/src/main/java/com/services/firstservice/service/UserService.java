@@ -1,5 +1,8 @@
 package com.services.firstservice.service;
 
+import java.util.NoSuchElementException;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +22,23 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    
+    @Value("${secondService.url}")
+    private String secondServiceUrl;
+
 
     public User get(Long id) {
-        return userRepository.findById(id).get();
+        User user = userRepository.findById(id).get();
+        if (user != null) {
+            return user;
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
     public User create(User user) {
         HttpEntity<User> entity = new HttpEntity<User>(user);
-        ResponseEntity<User> responseEntity = restTemplate.exchange("http://secondservice:8082/user", HttpMethod.POST,
+        ResponseEntity<User> responseEntity = restTemplate.exchange(secondServiceUrl, HttpMethod.POST,
                 entity,
                 User.class);
         User createdUser = responseEntity.getBody();
@@ -35,12 +47,11 @@ public class UserService {
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return userRepository.save(createdUser);
         } else {
-            return null;
+            throw new IllegalStateException();
         }
     }
 
-    public User update(Long id, User user) {
-        user.setId(id);
+    public User update(User user) {
         return userRepository.save(user);
     }
 

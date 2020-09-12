@@ -7,3 +7,6 @@ mysqlData/
 .project
 .classpath
 .settings/
+firstservice/bin/
+secondservice/bin/
+thirdservice/bin/

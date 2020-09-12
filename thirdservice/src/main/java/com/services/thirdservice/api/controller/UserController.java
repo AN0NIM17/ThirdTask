@@ -1,30 +1,31 @@
 package com.services.thirdservice.api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.services.thirdservice.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+
 import com.services.thirdservice.api.dto.UserDto;
 import com.services.thirdservice.api.transformer.UserDtoTransformer;
 import com.services.thirdservice.db.entity.user.User;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
-    
-    @Autowired
-    private UserService userService;
-    
+
+    private final UserService userService;
+
     @PostMapping
-    public ResponseEntity<UserDto> create(@RequestBody UserDto userDto) {
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public UserDto create(@RequestBody UserDto userDto) {
         User user = UserDtoTransformer.transform(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserDtoTransformer.transform(userService.create(user)));
+        return UserDtoTransformer.transform(userService.create(user));
     }
 }

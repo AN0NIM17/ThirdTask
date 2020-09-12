@@ -1,8 +1,9 @@
 package com.services.firstservice.api.controller;
 
+import java.util.NoSuchElementException;
+
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,27 +20,37 @@ import com.services.firstservice.api.transformer.UserDtoTransformer;
 import com.services.firstservice.db.entity.user.User;
 import com.services.firstservice.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
-    public UserDto get(@PathVariable Long id) {
-        return UserDtoTransformer.transform(userService.get(id));
+    public ResponseEntity<UserDto> get(@PathVariable Long id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(UserDtoTransformer.transform(userService.get(id)));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PostMapping
     public ResponseEntity<UserDto> create(@RequestBody @Valid UserDto userDto) {
         User user = UserDtoTransformer.transform(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserDtoTransformer.transform(userService.create(user)));
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(UserDtoTransformer.transform(userService.create(user)));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/{id}")
     public UserDto update(@PathVariable Long id, @RequestBody UserDto userDto) {
-        User user = userService.update(id, UserDtoTransformer.transform(userDto, id));
+        User user = userService.update(UserDtoTransformer.transform(userDto, id));
         return UserDtoTransformer.transform(user);
     }
 

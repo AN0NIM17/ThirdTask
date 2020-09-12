@@ -1,5 +1,6 @@
 package com.services.secondservice.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    
+    @Value("${thirdService.url}")
+    private String thirdServiceUrl;
 
     public User create(User user) {
         HttpEntity<User> entity = new HttpEntity<User>(user);
-        ResponseEntity<User> responseEntity = restTemplate.exchange("http://thirdservice:8083/user", HttpMethod.POST,
+        ResponseEntity<User> responseEntity = restTemplate.exchange(thirdServiceUrl, HttpMethod.POST,
                 entity, User.class);
         User createdUser = responseEntity.getBody();
         createdUser.setMiddleName(user.getMiddleName());
@@ -30,7 +34,7 @@ public class UserService {
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return userRepository.save(createdUser);
         } else {
-            return null;
+            throw new RuntimeException();
         }
     }
 }
