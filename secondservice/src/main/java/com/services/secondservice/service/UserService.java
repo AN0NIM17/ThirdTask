@@ -30,9 +30,11 @@ public class UserService {
                 entity, User.class);
         User createdUser = responseEntity.getBody();
         createdUser.setMiddleName(user.getMiddleName());
-        log.info("Get user: {}", createdUser);
+        log.info("Created user: {}", createdUser);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return userRepository.save(createdUser);
+            log.info("Successful response");
+            userRepository.updateMiddleNameById(createdUser.getMiddleName(), createdUser.getId());
+            return createdUser;
         } else {
             throw new RuntimeException();
         }

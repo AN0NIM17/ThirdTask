@@ -22,12 +22,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
-    
+
     @Value("${secondService.url}")
     private String secondServiceUrl;
 
-
-    public User get(Long id) {
+    public User get(Integer id) {
         User user = userRepository.findById(id).get();
         if (user != null) {
             return user;
@@ -45,7 +44,9 @@ public class UserService {
         createdUser.setLastName(user.getLastName());
         log.info("Created User: {}", createdUser);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return userRepository.save(createdUser);
+            log.info("Successful response");
+            userRepository.updateLastNameById(createdUser.getLastName(), createdUser.getId());
+            return createdUser;
         } else {
             throw new IllegalStateException();
         }
@@ -55,7 +56,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         userRepository.deleteById(id);
     }
 }

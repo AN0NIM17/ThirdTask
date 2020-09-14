@@ -30,7 +30,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> get(@PathVariable Long id) {
+    public ResponseEntity<UserDto> get(@PathVariable Integer id) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(UserDtoTransformer.transform(userService.get(id)));
         } catch (NoSuchElementException e) {
@@ -49,13 +49,13 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserDto update(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable Integer id, @RequestBody UserDto userDto) {
         User user = userService.update(UserDtoTransformer.transform(userDto, id));
         return UserDtoTransformer.transform(user);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         userService.delete(id);
     }
 }

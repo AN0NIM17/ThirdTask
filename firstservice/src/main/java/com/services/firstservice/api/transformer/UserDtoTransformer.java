@@ -9,7 +9,7 @@ public class UserDtoTransformer {
         return buildUser(userDto, userDto.getId());
     }
     
-    public static User transform(UserDto userDto, Long id) {
+    public static User transform(UserDto userDto, Integer id) {
         return buildUser(userDto, id);
     }
 
@@ -22,7 +22,7 @@ public class UserDtoTransformer {
                 .build();
     }
     
-    private static User buildUser(UserDto userDto, Long id) {
+    private static User buildUser(UserDto userDto, Integer id) {
         return User.builder()
                 .id(userDto.getId())
                 .firstName(userDto.getFirstName())
