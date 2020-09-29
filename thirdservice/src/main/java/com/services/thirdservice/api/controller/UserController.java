@@ -1,5 +1,7 @@
 package com.services.thirdservice.api.controller;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public UserDto create(@RequestBody UserDto userDto) {
+    public UserDto create(@RequestBody UserDto userDto) throws IOException {
         User user = UserDtoTransformer.transform(userDto);
         return UserDtoTransformer.transform(userService.create(user));
     }

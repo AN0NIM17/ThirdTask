@@ -1,5 +1,7 @@
 package com.services.firstservice.service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.api.services.sheets.v4.model.ValueRange;
 import com.services.firstservice.db.entity.user.User;
 import com.services.firstservice.db.repositories.user.UserRepository;
 
@@ -26,8 +29,8 @@ public class UserService {
     @Value("${secondService.url}")
     private String secondServiceUrl;
 
-    public User get(Integer id) {
-        User user = userRepository.findById(id).get();
+    public ValueRange get(Integer id) throws IOException {
+        ValueRange user = userRepository.get(id);
         if (user != null) {
             return user;
         } else {
@@ -35,7 +38,7 @@ public class UserService {
         }
     }
 
-    public User create(User user) {
+    public User create(User user) throws IOException {
         HttpEntity<User> entity = new HttpEntity<User>(user);
         ResponseEntity<User> responseEntity = restTemplate.exchange(secondServiceUrl, HttpMethod.POST,
                 entity,
@@ -45,18 +48,23 @@ public class UserService {
         log.info("Created User: {}", createdUser);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             log.info("Successful response");
-            userRepository.updateLastNameById(createdUser.getLastName(), createdUser.getId());
+            userRepository.create(createdUser);
             return createdUser;
         } else {
             throw new IllegalStateException();
         }
     }
 
-    public User update(User user) {
-        return userRepository.save(user);
+    public User update(User user) throws IOException, GeneralSecurityException {
+        userRepository.update(user);
+        return user;
     }
 
-    public void delete(Integer id) {
-        userRepository.deleteById(id);
+    public void delete(Integer id) throws IOException {
+        userRepository.delete(id);
+    }
+    
+    public void createNewSpreadsheet() throws IOException {
+        userRepository.createNewSpreadsheet();
     }
 }
