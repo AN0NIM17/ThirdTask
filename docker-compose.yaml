@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  firstservice:
+    build: ./firstservice/
+    ports:
+      - 8081:8081
+
+  secondservice:
+    build: ./secondservice/
+      
+  thirdservice:
+    build: ./thirdservice/
+
